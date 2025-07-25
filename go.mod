@@ -7,6 +7,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/metalmatze/signal v0.0.0-20210307161603-1c9aa721a97a
 	github.com/oklog/run v1.2.0
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/prometheus-community/prom-label-proxy v0.11.1
 	github.com/prometheus/client_golang v1.22.0
 )

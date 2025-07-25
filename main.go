@@ -18,14 +18,20 @@ import (
 	"github.com/MicahParks/keyfunc/v3"
 	"github.com/metalmatze/signal/internalserver"
 	"github.com/oklog/run"
+	"github.com/patrickmn/go-cache"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
 
 	"github.com/prometheus-community/prom-label-proxy/injectproxy"
 )
 
+var (
+	grafanaJWKSPath = "/api/signing-keys/keys"
+)
+
 func main() {
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
+
 	var (
 		insecureListenAddress  string
 		internalListenAddress  string
@@ -37,8 +43,6 @@ func main() {
 		headerUsesListSyntax   bool
 		rulesWithActiveAlerts  bool
 		grafanaUrl             string
-		grafanaUser            string
-		grafanaPass            string
 	)
 
 	flagset := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
@@ -56,8 +60,14 @@ func main() {
 	flagset.BoolVar(&headerUsesListSyntax, "header-uses-list-syntax", false, "When specified, the header line value will be parsed as a comma-separated list. This allows a single tenant header line to specify multiple tenant names.")
 	flagset.BoolVar(&rulesWithActiveAlerts, "rules-with-active-alerts", false, "When true, the proxy will return alerting rules with active alerts matching the tenant label even when the tenant label isn't present in the rule's labels.")
 	flagset.StringVar(&grafanaUrl, "grafana-url", "", "Grafana URL used to fetch teams, JWKS etc.")
-	flagset.StringVar(&grafanaUser, "grafana-user", "", "Grafana admin user")
-	flagset.StringVar(&grafanaPass, "grafana-pass", "", "Grafana admin password")
+
+	if os.Getenv("GRAFANA_ADMIN_USER") == "" {
+		log.Fatalf("GRAFANA_ADMIN_USER not present")
+	}
+
+	if os.Getenv("GRAFANA_ADMIN_PASS") == "" {
+		log.Fatalf("GRAFANA_ADMIN_PASS not present")
+	}
 
 	//nolint: errcheck // Parse() will exit on error.
 	flagset.Parse(os.Args[1:])
@@ -106,19 +116,22 @@ func main() {
 		opts = append(opts, injectproxy.WithActiveAlerts())
 	}
 
-	k, err := keyfunc.NewDefaultCtx(context.Background(), []string{url.JoinPath("/api/signing-keys/keys").String()})
+	k, err := keyfunc.NewDefaultCtx(context.Background(), []string{url.JoinPath(grafanaJWKSPath).String()})
 	if err != nil {
 		log.Fatalf("failed to create a keyfunc.Keyfunc from url: %v", err)
 	}
 
+	c := cache.New(5*time.Minute, 10*time.Minute)
+
 	extractLabeler := teams.GrafanaTeamsEnforcer{
 		KeyFunc: k,
+		Cache:   *c,
 		Client: http.Client{
 			Timeout: 5 * time.Second,
 		},
 		GrafanaUrl:  *url,
-		GrafanaUser: grafanaUser,
-		GrafanaPass: grafanaPass,
+		GrafanaUser: os.Getenv("GRAFANA_ADMIN_USER"),
+		GrafanaPass: os.Getenv("GRAFANA_ADMIN_PASS"),
 	}
 
 	var g run.Group
