@@ -51,14 +51,14 @@ changelog:
 dockers:
   - dockerfile: Dockerfile
     image_templates:
-      - "ghcr.io/Amoolaa/prom-grafana-lbac:{{ .Tag }}-arm64v8"
+      - "ghcr.io/amoolaa/prom-grafana-lbac:{{ .Tag }}-arm64v8"
     goarch: arm64
     use: buildx
     build_flag_templates:
       - "--platform=linux/arm64/v8"
   - dockerfile: Dockerfile
     image_templates:
-      - "ghcr.io/Amoolaa/prom-grafana-lbac:{{ .Tag }}-amd64"
+      - "ghcr.io/amoolaa/prom-grafana-lbac:{{ .Tag }}-amd64"
     goarch: amd64
     use: buildx
     build_flag_templates:
