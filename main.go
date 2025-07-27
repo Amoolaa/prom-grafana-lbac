@@ -10,10 +10,11 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"prom-grafana-lbac/pkg/teams"
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/Amoolaa/prom-grafana-lbac/pkg/teams"
 
 	"github.com/MicahParks/keyfunc/v3"
 	"github.com/metalmatze/signal/internalserver"

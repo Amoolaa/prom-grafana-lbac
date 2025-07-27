@@ -1,4 +1,4 @@
-module prom-grafana-lbac
+module github.com/Amoolaa/prom-grafana-lbac
 
 go 1.24.5
 
