@@ -65,10 +65,10 @@ dockers:
       - "--platform=linux/amd64"
   
 docker_manifests:
-  - name_template: "ghcr.io/Amoolaa/prom-grafana-lbac:{{ .Tag }}"
+  - name_template: "ghcr.io/amoolaa/prom-grafana-lbac:{{ .Tag }}"
     image_templates:
-      - "ghcr.io/Amoolaa/prom-grafana-lbac:{{ .Tag }}-arm64v8"
-      - "ghcr.io/Amoolaa/prom-grafana-lbac:{{ .Tag }}-amd64"
+      - "ghcr.io/amoolaa/prom-grafana-lbac:{{ .Tag }}-arm64v8"
+      - "ghcr.io/amoolaa/prom-grafana-lbac:{{ .Tag }}-amd64"
 
 
 release:
