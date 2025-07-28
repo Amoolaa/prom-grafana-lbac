@@ -14,6 +14,12 @@ Once the user is verified, we call Grafana to fetch the list of teams that the u
 
 The names of teams that the requestor is part of are then used as the label values enforced in the query, using [prom-label-proxy](https://github.com/prometheus-community/prom-label-proxy).
 
+## Installation
+
+- **Docker**: images are published at `ghcr.io/amoolaa/prom-grafana-lbac:latest`
+- **Binary**: download a precompiled binary from the [Releases](https://github.com/amoolaa/prom-grafana-lbac/releases) page
+- or clone and build from source
+
 ## Motivation
 
 I help run an LGTM stack using [Grafana Orgs](https://grafana.com/docs/grafana/latest/administration/organization-management/) to handle tenancy. This works alright for small tenants, but as they grow larger tenants need fine-grained RBAC on their datasources. This project provides a way to provide additional label-based-access controls (LBAC) on their Prometheus-compatible datasources in addition to the other RBAC features in Grafana Teams. This is also a way to restrict read access in a single org, multi-team setup in Grafana OSS similar to LBAC offerings in Grafana Enterprise and Cloud.
